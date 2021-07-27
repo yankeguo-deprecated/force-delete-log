@@ -63,7 +63,7 @@ func handleFile(path string, info fs.FileInfo, now time.Time) {
 
 	match := DatePattern.FindString(info.Name())
 	if match == "" {
-		if info.Size() > 5*1000*1000*1000 {
+		if info.Size() > 10*1000*1000*1000 {
 			log.Println("> TRUNCATE")
 			if err = os.Truncate(path, 0); err != nil {
 				return
@@ -82,7 +82,14 @@ func handleFile(path string, info fs.FileInfo, now time.Time) {
 				return
 			}
 		} else {
-			log.Println("> KEEP")
+			if info.Size() > 10*1000*1000*1000 {
+				log.Println("> TRUNCATE")
+				if err = os.Truncate(path, 0); err != nil {
+					return
+				}
+			} else {
+				log.Println("> KEEP")
+			}
 		}
 	}
 
